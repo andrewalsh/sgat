@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="/templates/new_template.xhtml">
+	<ui:define name="metatada">
+		<f:metadata>
+			<f:event listener="#{colaboradorBean.listar}" type="preRenderView" />
+		</f:metadata>
+	</ui:define>
+	<ui:define name="conteudo">
+		<h:form id="frmColaborador">
+			<p:tabView id="viewColaborador" activeIndex="0">
+				<p:tab title="Colaboradores">
+					<p:commandButton value="Novo Cargo"
+						oncomplete="PF('dlgNovoCargo').show();" />
+					<p:separator />
+					<h:panelGrid columns="4" id="pnlColaborador">
+						<p:outputLabel value="Cargo:" />
+						<h:panelGroup>
+							<p:selectOneMenu value="#{colaboradorBean.cargo}"
+								converter="cargoConverter">
+								<f:selectItem itemLabel="Selecione..." itemValue="" />
+								<f:selectItems value="#{colaboradorBean.cargos}" var="cargos"
+									itemValue="#{cargos}" itemLabel="#{cargos.nome}" />
+							</p:selectOneMenu>
+						</h:panelGroup>
+
+						<h:outputText value="Nome:" />
+						<p:inputText size="40"
+							value="#{colaboradorBean.colaborador.pessoa.nome}" />
+
+						<h:outputText value="CPF:" />
+						<p:inputMask value="#{colaboradorBean.colaborador.pessoa.cpf}"
+							mask="999.999.999-99" />
+
+						<h:outputText value="RG:" />
+						<p:inputText size="15"
+							value="#{colaboradorBean.colaborador.pessoa.rg}" />
+
+						<h:outputText value="Nascimento:" />
+						<p:calendar size="10"
+							value="#{colaboradorBean.colaborador.pessoa.nascimento}"
+							locale="pt_BR" navigator="true" pattern="dd/MM/yyyy"
+							yearRange="1900:2020" />
+
+						<h:outputText value="Tel. Celular:" />
+						<p:inputMask mask="99999-9999" size="15"
+							value="#{colaboradorBean.colaborador.pessoa.telefoneCelular}" />
+
+						<h:outputText value="Tel. Residêncial:" />
+						<p:inputMask mask="9999-9999" size="15"
+							value="#{colaboradorBean.colaborador.pessoa.telefoneFixo}" />
+
+						<h:outputText value="e-mail:" />
+						<p:inputText size="35"
+							value="#{colaboradorBean.colaborador.pessoa.email}" />
+
+						<h:outputText value="CEP:" />
+						<h:panelGroup>
+							<p:inputText size="10" value="#{colaboradorBean.cep.CEP}" />
+							<p:commandButton value="Consultar CEP"
+								actionListener="#{colaboradorBean.buscarPorCep}"
+								update=":frmColaborador" />
+							<p:commandButton value="Consulta Avançada"
+								oncomplete="PF('dlgConsultaAvancada').show();" />
+						</h:panelGroup>
+
+						<h:outputText value="Endereço:" />
+						<p:inputText size="50" value="#{colaboradorBean.cep.RUA}" />
+
+						<h:outputText value="Número:" />
+						<p:inputText size="20"
+							value="#{colaboradorBean.residencia.numero}" />
+
+						<h:outputText value="Complemento:" />
+						<p:inputText size="20"
+							value="#{colaboradorBean.residencia.complemento}" />
+
+
+						<h:outputText value="Bairro:" />
+						<p:inputText size="20" value="#{colaboradorBean.cep.BAIRRO}" />
+
+						<h:outputText value="Cidade:" />
+						<p:inputText size="20" value="#{colaboradorBean.cep.CIDADE}" />
+
+						<h:outputText value="Estado:" />
+						<p:inputText value="#{colaboradorBean.cep.UF}" />
+
+					</h:panelGrid>
+					<p:separator />
+					<h:panelGrid columns="2">
+						<p:commandButton value="Salvar" update="msg :frmColaborador"
+							actionListener="#{colaboradorBean.salvar}" />
+						<p:commandButton value="Novo" update="frmColaborador" />
+					</h:panelGrid>
+				</p:tab>
+			</p:tabView>
+			<p:dataTable value="#{colaboradorBean.residencias}" var="residencia"
+				paginator="true" rows="10">
+				<p:column headerText="Colaborador">
+					<p:outputLabel value="#{residencia.colaborador.pessoa.nome}" />
+				</p:column>
+				<p:column headerText="Cargo">
+					<p:outputLabel value="#{residencia.colaborador.cargo.nome}" />
+				</p:column>
+				<p:column headerText="Telefone Celular">
+					<p:outputLabel
+						value="#{residencia.colaborador.pessoa.telefoneCelular}" />
+				</p:column>
+				<p:column headerText="Telefone Fixo">
+					<p:outputLabel
+						value="#{residencia.colaborador.pessoa.telefoneFixo}" />
+				</p:column>
+				<p:column>
+					<p:commandButton value="Selecionar"
+						actionListener="#{colaboradorBean.popularColaborador(residencia)}"
+						update="frmColaborador" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+		<!-- TELAS DIALOG -->
+		<p:dialog appendTo="@(body)" closable="true" closeOnEscape="true"
+			draggable="false" modal="true" position="center" resizable="false"
+			widgetVar="dlgConsultaAvancada" id="dlg" showEffect="clip"
+			hideEffect="clip">
+			<h:form id="frmDlg">
+				<h:panelGrid columns="3">
+					<p:outputLabel value="Rua:" />
+					<p:inputText value="#{colaboradorBean.cep.RUA}" size="50" />
+					<p:commandButton value="Pesquisar"
+						actionListener="#{colaboradorBean.buscarPorRua}" update=":frmDlg" />
+				</h:panelGrid>
+				<p:separator />
+				<p:dataTable emptyMessage="Não há registros na lista"
+					paginator="true" rows="10" var="lista" id="tbl"
+					value="#{colaboradorBean.ceps}">
+					<p:column headerText="Endereço">
+						<p:outputLabel value="#{lista.RUA}" />
+					</p:column>
+
+					<p:column headerText="Bairro">
+						<p:outputLabel value="#{lista.BAIRRO}" />
+					</p:column>
+
+					<p:column headerText="Cep">
+						<p:outputLabel value="#{lista.CEP}" />
+					</p:column>
+
+					<p:column headerText="Cidade">
+						<p:outputLabel value="#{lista.CIDADE}" />
+					</p:column>
+
+					<p:column>
+						<p:commandButton value="Adicionar"
+							actionListener="#{colaboradorBean.popularCep(lista)}"
+							update="frmColaborador"
+							oncomplete="PF('dlgConsultaAvancada').hide();" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog appendTo="@(body)" closable="true" closeOnEscape="true"
+			draggable="false" modal="true" position="center" resizable="false"
+			widgetVar="dlgNovoCargo" showEffect="clip" hideEffect="clip">
+			<h:form id="frmDlgNovoCargo">
+				<h:panelGrid columns="3">
+					<p:outputLabel value="Cargo:" />
+					<p:inputText value="#{colaboradorBean.cargo.nome}" size="50" />
+					<p:commandButton value="Salvar"
+						actionListener="#{colaboradorBean.novoCargo}"
+						update=":frmColaborador" oncomplete="PF('dlgNovoCargo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>
+</html>

@@ -14,7 +14,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name="cargo")
 @NamedQueries({
-	@NamedQuery(name="Cargo.listar",query="from Cargo c")
+	@NamedQuery(name="Cargo.listar",query="from Cargo c"),
+	@NamedQuery(name="Cargo.buscarPorCodigo",query="from Cargo c where c.idCargo=:id")
 })
 public class Cargo implements Serializable{
 	private long idCargo;

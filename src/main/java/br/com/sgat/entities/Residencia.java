@@ -8,11 +8,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @SuppressWarnings("serial")
 @Entity
 @Table(name="residencia")
+@NamedQueries({
+	@NamedQuery(name="Residencia.listar",query="from Residencia r")
+})
 public class Residencia implements Serializable{
 	private long idResidencia;
 	private String numero;

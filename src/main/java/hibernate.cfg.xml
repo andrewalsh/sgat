@@ -42,6 +42,8 @@
 		<mapping class="br.com.sgat.entities.EnderecoDeAtendimento"/>
 		<mapping class="br.com.sgat.entities.Pessoa"/>
 		<mapping class="br.com.sgat.entities.Residencia"/>
+		<mapping class="br.com.sgat.entities.Fabricante"/>
+		<mapping class="br.com.sgat.entities.TipoDeEquipamento"/>
 	</session-factory>
 
 </hibernate-configuration>

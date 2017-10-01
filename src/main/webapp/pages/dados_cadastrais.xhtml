@@ -1,0 +1,174 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+	<h:form id="frmCliente">
+
+		<p:tabView id="viewSocio" activeIndex="0">
+			<p:tab title="Beneficiados">
+				<h:panelGrid>
+					<p:commandButton value="Pesquisar Cliente"
+						oncomplete="PF('dlgPesquisaCliente').show();" />
+				</h:panelGrid>
+				<p:separator />
+				<h:panelGrid columns="4" id="pnlSocio">
+
+					<h:outputText value="Nome:" />
+					<p:inputText size="40" value="#{clienteBean.cliente.pessoa.nome}" />
+
+					<h:outputText value="CPF:" />
+					<p:inputMask value="#{clienteBean.cliente.pessoa.cpf}"
+						mask="999.999.999-99" />
+
+					<h:outputText value="RG:" />
+					<p:inputText size="15" value="#{clienteBean.cliente.pessoa.rg}" />
+
+					<h:outputText value="Nascimento:" />
+					<p:calendar size="10"
+						value="#{clienteBean.cliente.pessoa.nascimento}" locale="pt_BR"
+						navigator="true" pattern="dd/MM/yyyy" yearRange="1900:2020" />
+
+					<h:outputText value="Tel. Celular:" />
+					<p:inputMask mask="99999-9999" size="15"
+						value="#{clienteBean.cliente.pessoa.telefoneCelular}" />
+
+					<h:outputText value="Tel. Residêncial:" />
+					<p:inputMask mask="9999-9999" size="15"
+						value="#{clienteBean.cliente.pessoa.telefoneFixo}" />
+
+					<h:outputText value="e-mail:" />
+					<p:inputText size="35" value="#{clienteBean.cliente.pessoa.email}" />
+
+					<h:outputText value="CEP:" />
+					<h:panelGroup>
+						<p:inputText size="10" value="#{clienteBean.cep.CEP}" />
+						<p:commandButton value="Consultar CEP"
+							actionListener="#{clienteBean.buscarPorCep}" update=":frmCliente" />
+						<p:commandButton value="Consulta Avançada"
+							oncomplete="PF('dlgConsultaAvancada').show();" />
+					</h:panelGroup>
+
+					<h:outputText value="Endereço:" />
+					<p:inputText size="50" value="#{clienteBean.cep.RUA}" />
+
+					<h:outputText value="Número:" />
+					<p:inputText size="20"
+						value="#{clienteBean.enderecoDeAtendimento.numero}" />
+
+					<h:outputText value="Complemento:" />
+					<p:inputText size="20"
+						value="#{clienteBean.enderecoDeAtendimento.complemento}" />
+
+
+					<h:outputText value="Bairro:" />
+					<p:inputText size="20" value="#{clienteBean.cep.BAIRRO}" />
+
+					<h:outputText value="Cidade:" />
+					<p:inputText size="20" value="#{clienteBean.cep.CIDADE}" />
+
+					<h:outputText value="Estado:" />
+					<p:outputLabel value="#{clienteBean.cep.UF}" />
+
+				</h:panelGrid>
+				<p:separator />
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" update="msg :frmCliente"
+						actionListener="#{clienteBean.salvar}" />
+					<p:commandButton value="Novo" update="frmCliente" />
+				</h:panelGrid>
+			</p:tab>
+		</p:tabView>
+	</h:form>
+	<p:dialog appendTo="@(body)" closable="true" closeOnEscape="true"
+		draggable="false" modal="true" position="center" resizable="false"
+		widgetVar="dlgConsultaAvancada" id="dlg" showEffect="clip"
+		hideEffect="clip">
+		<h:form id="frmDlg">
+			<h:panelGrid columns="3">
+				<p:outputLabel value="Rua:" />
+				<p:inputText value="#{clienteBean.cep.RUA}" size="50" />
+				<p:commandButton value="Pesquisar"
+					actionListener="#{clienteBean.buscarPorRua}" update=":frmDlg" />
+			</h:panelGrid>
+			<p:separator />
+			<p:dataTable emptyMessage="Não há registros na lista"
+				paginator="true" rows="10" var="lista" id="tbl"
+				value="#{clienteBean.ceps}">
+				<p:column headerText="Endereço">
+					<p:outputLabel value="#{lista.RUA}" />
+				</p:column>
+
+				<p:column headerText="Bairro">
+					<p:outputLabel value="#{lista.BAIRRO}" />
+				</p:column>
+
+				<p:column headerText="Cep">
+					<p:outputLabel value="#{lista.CEP}" />
+				</p:column>
+
+				<p:column headerText="Cidade">
+					<p:outputLabel value="#{lista.CIDADE}" />
+				</p:column>
+
+				<p:column>
+					<p:commandButton value="Adicionar"
+						actionListener="#{clienteBean.popularCep(lista)}"
+						update="frmCliente" oncomplete="PF('dlgConsultaAvancada').hide();" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog appendTo="@(body)" closable="true" closeOnEscape="true"
+		draggable="false" modal="true" position="center" resizable="false"
+		widgetVar="dlgPesquisaCliente" header="Pesquisa de Clientes"
+		showEffect="clip" hideEffect="clip">
+		<h:form id="frmDlgPesquisaCliente">
+			<h:panelGrid columns="4">
+				<p:outputLabel value="Pesquisar por:" />
+				<p:selectOneMenu value="#{clienteBean.parametroPesquisa}">
+					<f:selectItem itemLabel="Nome" itemValue="nome" />
+					<f:selectItem itemLabel="CPF" itemValue="cpf" />
+					<f:selectItem itemLabel="RG" itemValue="rg" />
+					<f:selectItem itemLabel="Telefone Celular" itemValue="celular" />
+					<f:selectItem itemLabel="Telefone Fixo" itemValue="fixo" />
+				</p:selectOneMenu>
+				<p:inputText size="50" value="#{clienteBean.valorPesquisa}" />
+				<p:commandButton value="Pesquisar"
+					actionListener="#{clienteBean.pesquisarCliente}"
+					update=":frmDlgPesquisaCliente" />
+			</h:panelGrid>
+			<p:separator />
+			<p:dataTable emptyMessage="Não há registros na lista"
+				paginator="true" rows="15" var="lista" id="tbl"
+				value="#{clienteBean.enderecosDeAtendimento}">
+				<p:column headerText="Nome">
+					<p:outputLabel value="#{lista.cliente.pessoa.nome}" />
+				</p:column>
+
+				<p:column headerText="Endereço">
+					<p:outputLabel value="#{lista.ceps.RUA}" />
+				</p:column>
+
+				<p:column headerText="Bairro">
+					<p:outputLabel value="#{lista.ceps.BAIRRO}" />
+				</p:column>
+
+				<p:column headerText="Cep">
+					<p:outputLabel value="#{lista.ceps.CEP}" />
+				</p:column>
+
+				<p:column headerText="Cidade">
+					<p:outputLabel value="#{lista.ceps.CIDADE}" />
+				</p:column>
+
+				<p:column>
+					<p:commandButton value="Adicionar"
+						actionListener="#{clienteBean.popularEnderecoDeAtendimento(lista)}"
+						update="frmCliente" oncomplete="PF('dlgPesquisaCliente').hide();" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>
