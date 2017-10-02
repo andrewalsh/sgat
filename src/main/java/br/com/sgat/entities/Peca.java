@@ -9,11 +9,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @SuppressWarnings("serial")
 @Entity
 @Table(name="peca")
+@NamedQueries({
+	@NamedQuery(name="Peca.listar",query="from Peca p"),
+	@NamedQuery(name="Peca.buscarPorCodigo",query="from Peca p where p.idPeca=:id")
+})
 public class Peca implements Serializable{
 
 	private long idPeca;

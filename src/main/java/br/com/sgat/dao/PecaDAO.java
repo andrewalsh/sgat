@@ -6,17 +6,34 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import br.com.sgat.entities.TipoDeEquipamento;
+import br.com.sgat.entities.Peca;
 import br.com.sgat.util.HibernateUtil;
 
-public class TipoDeEquipamentoDAO {
+
+public class PecaDAO {
 	
-	public void salvar(TipoDeEquipamento tipoDeEquipamento) {
+	public void salvar(Peca peca) {
 		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
 		Transaction transaction = null;
 		try {
 			transaction = session.beginTransaction();
-			session.save(tipoDeEquipamento);
+			session.save(peca);
+			transaction.commit();
+		} catch (RuntimeException e) {
+			if(transaction != null) {
+				transaction.rollback();
+			}throw e;
+		}finally {
+			session.close();
+		}
+	}
+	
+	public void atualizar(Peca peca) {
+		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			session.update(peca);
 			transaction.commit();
 		} catch (RuntimeException e) {
 			if(transaction != null) {
@@ -27,48 +44,31 @@ public class TipoDeEquipamentoDAO {
 		}
 	}
 
-	
-	public void atualizar(TipoDeEquipamento tipoDeEquipamento) {
+	public Peca buscarPorCodigo(long id) {
 		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
-		Transaction transaction = null;
+		Peca peca = null;
 		try {
-			transaction = session.beginTransaction();
-			session.update(tipoDeEquipamento);
-			transaction.commit();
-		} catch (RuntimeException e) {
-			if(transaction != null) {
-				transaction.rollback();
-			}throw e;
-		}finally {
-			session.close();
-		}
-	}
-	
-	public TipoDeEquipamento buscarPorCodigo(long id) {
-		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
-		TipoDeEquipamento tipoDeEquipamento = null;
-		try {
-			Query query = session.getNamedQuery("TipoDeEquipamento.buscarPorCodigo");
+			Query query = session.getNamedQuery("Peca.buscarPorCodigo");
 			query.setLong("id", id);
-			tipoDeEquipamento = (TipoDeEquipamento) query.uniqueResult();
+			peca = (Peca) query.uniqueResult();
 		} catch (RuntimeException e) {
 			throw e;
 		}finally {
 			session.close();
-		}return tipoDeEquipamento;
+		}return peca;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<TipoDeEquipamento> listar(){
+	public List<Peca> listar(){
 		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
-		List<TipoDeEquipamento> tipoDeEquipamentos = null;
+		List<Peca> pecas = null;
 		try {
-			Query query = session.getNamedQuery("TipoDeEquipamento.listar");
-			tipoDeEquipamentos = query.list();
+			Query query = session.getNamedQuery("Peca.listar");
+			pecas = query.list();
 		} catch (RuntimeException e) {
 			throw e;
 		}finally {
 			session.close();
-		}return tipoDeEquipamentos;
+		}return pecas;
 	}
 }

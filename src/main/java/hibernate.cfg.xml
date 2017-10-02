@@ -44,6 +44,7 @@
 		<mapping class="br.com.sgat.entities.Residencia"/>
 		<mapping class="br.com.sgat.entities.Fabricante"/>
 		<mapping class="br.com.sgat.entities.TipoDeEquipamento"/>
+		<mapping class="br.com.sgat.entities.MaoDeObra"/>
 	</session-factory>
 
 </hibernate-configuration>

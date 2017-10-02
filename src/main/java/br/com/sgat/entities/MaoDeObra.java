@@ -6,11 +6,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @SuppressWarnings("serial")
 @Entity
 @Table(name="maodeobra")
+@NamedQueries({
+	@NamedQuery(name="MaoDeObra.listar",query="from MaoDeObra m"),
+	@NamedQuery(name="MaoDeObra.buscarPorCodigo",query="from MaoDeObra m where m.idMaoDeObra=:id")
+})
 public class MaoDeObra implements Serializable{
 
 	private long idMaoDeObra;

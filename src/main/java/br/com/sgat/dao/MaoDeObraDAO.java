@@ -6,34 +6,17 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import br.com.sgat.entities.TipoDeEquipamento;
+import br.com.sgat.entities.MaoDeObra;
 import br.com.sgat.util.HibernateUtil;
 
-public class TipoDeEquipamentoDAO {
+public class MaoDeObraDAO {
 	
-	public void salvar(TipoDeEquipamento tipoDeEquipamento) {
+	public void salvar(MaoDeObra maoDeObra) {
 		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
 		Transaction transaction = null;
 		try {
 			transaction = session.beginTransaction();
-			session.save(tipoDeEquipamento);
-			transaction.commit();
-		} catch (RuntimeException e) {
-			if(transaction != null) {
-				transaction.rollback();
-			}throw e;
-		}finally {
-			session.close();
-		}
-	}
-
-	
-	public void atualizar(TipoDeEquipamento tipoDeEquipamento) {
-		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
-		Transaction transaction = null;
-		try {
-			transaction = session.beginTransaction();
-			session.update(tipoDeEquipamento);
+			session.save(maoDeObra);
 			transaction.commit();
 		} catch (RuntimeException e) {
 			if(transaction != null) {
@@ -44,31 +27,48 @@ public class TipoDeEquipamentoDAO {
 		}
 	}
 	
-	public TipoDeEquipamento buscarPorCodigo(long id) {
+	public void atualizar(MaoDeObra maoDeObra) {
 		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
-		TipoDeEquipamento tipoDeEquipamento = null;
+		Transaction transaction = null;
 		try {
-			Query query = session.getNamedQuery("TipoDeEquipamento.buscarPorCodigo");
+			transaction = session.beginTransaction();
+			session.update(maoDeObra);
+			transaction.commit();
+		} catch (RuntimeException e) {
+			if(transaction != null) {
+				transaction.rollback();
+			}throw e;
+		}finally {
+			session.close();
+		}
+	}
+	
+	public MaoDeObra buscrPorCodigo(long id) {
+		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
+		MaoDeObra maoDeObra = null;
+		try {
+			Query query = session.getNamedQuery("MaoDeObra.buscarPorCodigo");
 			query.setLong("id", id);
-			tipoDeEquipamento = (TipoDeEquipamento) query.uniqueResult();
+			maoDeObra = (MaoDeObra) query.uniqueResult();
 		} catch (RuntimeException e) {
 			throw e;
 		}finally {
 			session.close();
-		}return tipoDeEquipamento;
+		}return maoDeObra;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<TipoDeEquipamento> listar(){
+	public List<MaoDeObra> listar(){
 		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
-		List<TipoDeEquipamento> tipoDeEquipamentos = null;
+		List<MaoDeObra> maoDeObras = null;
 		try {
-			Query query = session.getNamedQuery("TipoDeEquipamento.listar");
-			tipoDeEquipamentos = query.list();
+			Query query = session.getNamedQuery("MaoDeObra.listar");
+			maoDeObras = query.list();
 		} catch (RuntimeException e) {
 			throw e;
 		}finally {
 			session.close();
-		}return tipoDeEquipamentos;
+		}return maoDeObras;
 	}
+
 }

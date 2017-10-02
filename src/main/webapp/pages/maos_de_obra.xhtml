@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="/templates/new_template.xhtml">
+	<ui:define name="metatada">
+		<f:metadata>
+			<f:event listener="#{maoDeObraBean.listar}" type="preRenderView" />
+		</f:metadata>
+	</ui:define>
+	<ui:define name="conteudo">
+		<h:form id="frmMaoDeObra">
+
+			<p:tabView id="viewMaoDeObra" activeIndex="0">
+				<p:tab title="Mãos de Obra">
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Nome:" />
+						<p:inputText size="30" value="#{maoDeObraBean.maoDeObra.nome}" />
+					</h:panelGrid>
+					<p:separator />
+					<h:panelGrid columns="2">
+						<p:commandButton value="Salvar"
+							actionListener="#{maoDeObraBean.slavar}" update="msg :frmMaoDeObra" />
+
+						<p:commandButton value="Novo" actionListener="#{maoDeObraBean.novo}"
+							update="frmMaoDeObra" />
+					</h:panelGrid>
+				</p:tab>
+			</p:tabView>
+			<p:dataTable emptyMessage="Não há registros na lista"
+				paginator="true" rows="5" var="lista" id="tbl"
+				value="#{maoDeObraBean.maoDeObras}">
+
+				<p:column headerText="Mão de Obra" filterBy="#{lista.nome}">
+					<p:outputLabel value="#{lista.nome}" />
+				</p:column>
+				<p:column style="width: 10%; text-align:center">
+					<p:commandButton value="Selecionar"
+						actionListener="#{maoDeObraBean.popularMaoDeObra(lista)}"
+						update="frmMaoDeObra:viewMaoDeObra" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>
